@@ -1,0 +1,25 @@
+{
+  "name": "blog_app",
+  "version": "1.0.0",
+  "description": "Restful blog api",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "keywords": [
+    "blog",
+    "api",
+    "restful",
+    "rest",
+    "api"
+  ],
+  "author": "Nabin Mahanty",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "mongoose": "^8.19.1",
+    "nodemon": "^3.1.10"
+  }
+}
