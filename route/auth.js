@@ -5,6 +5,8 @@ const {
   signupValidator,
   signinValidator,
   emailValidator,
+  verifyUserValidator,
+  recoverPasswordValidator,
 } = require("../validators/auth");
 const validate = require("../validators/validate");
 
@@ -15,6 +17,25 @@ router.post(
   emailValidator,
   validate,
   authController.verifyCode
+);
+
+router.post(
+  "/verify-user",
+  verifyUserValidator,
+  validate,
+  authController.verifyUser
+);
+router.post(
+  "/forgot-password-code",
+  emailValidator,
+  validate,
+  authController.forgotPasswordCode
+);
+router.post(
+  "/recover-password",
+  recoverPasswordValidator,
+  validate,
+  authController.recoverPassword
 );
 
 module.exports = router;

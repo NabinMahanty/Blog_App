@@ -6,6 +6,9 @@ const comparePassword = require("../utils/comparePassword");
 const generateToken = require("../utils/generateToken");
 const generateCode = require("../utils/generateCode");
 const sendEmail = require("../utils/sendEmail");
+const hashPassword = require("../utils/hashPassword");
+const { pass } = require("../config/kyes");
+// const { use } = require("react");
 const signup = async (req, res, next) => {
   try {
     const { name, email, password, role } = req.body;
@@ -84,5 +87,88 @@ const verifyCode = async (req, res, next) => {
     next(error);
   }
 };
+const verifyUser = async (req, res, next) => {
+  try {
+    const { email, code } = req.body;
 
-module.exports = { signup, signin, verifyCode };
+    const user = await User.findOne({ email });
+    if (!user) {
+      res.code = 404;
+      throw new Error("User not Found");
+    }
+    if (user.verificationCode !== code) {
+      res.code = 400;
+      throw new Error("Invalid Code");
+    }
+    user.isVerified = true;
+    user.verificationCode = null;
+    await user.save();
+
+    res.status(200).json({ message: "User verifiaction Successful" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const forgotPasswordCode = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      res.code = 404;
+      throw new Error("User Not Found");
+    }
+    const code = generateCode(6);
+    user.forgotPasswordCode = code;
+    await user.save();
+
+    // send email for forgot password
+    await sendEmail({
+      emailTo: user.email,
+      subject: "Password Reset Code",
+      code,
+      content: "reset your password",
+    });
+
+    res.status(200).json({
+      message: "Password reset code sent successfully.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const recoverPassword = async (req, res, next) => {
+  try {
+    const { email, code, password } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      res.code = 400;
+      throw new Error("User Not Found");
+    }
+    if (user.forgotPasswordCode !== code) {
+      res.code = 400;
+      throw new Error("Invalid Code");
+    }
+    const hashedPassword = await hashPassword(password);
+    user.password = hashedPassword;
+    user.forgotPasswordCode = null;
+    await user.save();
+    res.status(200).json({
+      message: "Password recovered successfully.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = {
+  signup,
+  signin,
+  verifyCode,
+  verifyUser,
+  forgotPasswordCode,
+  recoverPassword,
+};

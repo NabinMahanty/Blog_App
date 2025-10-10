@@ -21,4 +21,35 @@ const emailValidator = [
     .notEmpty()
     .withMessage("Email is required"),
 ];
-module.exports = { signupValidator, signinValidator, emailValidator };
+
+const verifyUserValidator = [
+  check("email")
+    .isEmail()
+    .withMessage("Invalid Email")
+    .notEmpty()
+    .withMessage("Email is required"),
+
+  check("code").notEmpty().withMessage("Code Required"),
+];
+
+const recoverPasswordValidator = [
+  check("email")
+    .isEmail()
+    .withMessage("Invalid Email")
+    .notEmpty()
+    .withMessage("Email is required"),
+  check("code").notEmpty().withMessage("Code Required"),
+
+  check("email")
+    .isEmail()
+    .withMessage("Invalid Email")
+    .notEmpty()
+    .withMessage("Email is required"),
+];
+module.exports = {
+  signupValidator,
+  signinValidator,
+  emailValidator,
+  verifyUserValidator,
+  recoverPasswordValidator,
+};
