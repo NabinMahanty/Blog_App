@@ -4,7 +4,7 @@ const dotenv = require("dotenv");
 const morgan = require("morgan");
 dotenv.config();
 const connectMongodb = require("./init/mongodb");
-const { authRoute } = require("./route");
+const { authRoute } = require("./routes");
 const { errorHandler } = require("./middlewares");
 const notFound = require("./controllers/notfound");
 

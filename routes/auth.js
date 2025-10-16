@@ -7,8 +7,10 @@ const {
   emailValidator,
   verifyUserValidator,
   recoverPasswordValidator,
+  ChangePasswordValidator,
 } = require("../validators/auth");
 const validate = require("../validators/validate");
+const isAuth = require("../middlewares/isAuth");
 
 router.post("/signup", signupValidator, validate, authController.signup);
 router.post("/signin", signinValidator, validate, authController.signin);
@@ -36,6 +38,14 @@ router.post(
   recoverPasswordValidator,
   validate,
   authController.recoverPassword
+);
+
+router.put(
+  "/change-password",
+  ChangePasswordValidator,
+  validate,
+  isAuth,
+  authController.ChangePassword
 );
 
 module.exports = router;

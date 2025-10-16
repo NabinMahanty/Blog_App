@@ -1,5 +1,6 @@
 // const { email } = require("../app");
 const { User } = require("../models");
+const mongoose = require("mongoose");
 // const hashPassword = require("../utils/hashPassword");
 const hashPasswordUtil = require("../utils/hashPassword");
 const comparePassword = require("../utils/comparePassword");
@@ -164,6 +165,42 @@ const recoverPassword = async (req, res, next) => {
   }
 };
 
+const ChangePassword = async (req, res, next) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+    const { _id } = req.user;
+
+    const user = await User.findById(_id);
+    if (!user) {
+      res.code = 404;
+      throw new Error("User not found");
+    }
+
+    const match = await comparePassword(oldPassword, user.password);
+    if (!match) {
+      res.code = 400;
+      throw new Error("Old Password does not match");
+    }
+
+    if (oldPassword === newPassword) {
+      res.code = 400;
+      throw new Error("You are using the same password");
+    }
+
+    const hashedPassword = await hashPassword(newPassword);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({
+      code: 200,
+      status: true,
+      message: "Password Changed Successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   signup,
   signin,
@@ -171,4 +208,5 @@ module.exports = {
   verifyUser,
   forgotPasswordCode,
   recoverPassword,
+  ChangePassword,
 };
