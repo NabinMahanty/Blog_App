@@ -1,0 +1,6 @@
+const validateEmail = (email) => {
+  const result = email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+  return result;
+};
+
+module.exports = validateEmail;

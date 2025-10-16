@@ -8,6 +8,7 @@ const {
   verifyUserValidator,
   recoverPasswordValidator,
   ChangePasswordValidator,
+  updateProfile,
 } = require("../validators/auth");
 const validate = require("../validators/validate");
 const isAuth = require("../middlewares/isAuth");
@@ -46,6 +47,14 @@ router.put(
   validate,
   isAuth,
   authController.ChangePassword
+);
+
+router.put(
+  "/update-profile",
+  isAuth,
+  updateProfile,
+  validate,
+  authController.updateProfile
 );
 
 module.exports = router;
